@@ -28,18 +28,19 @@ def unknown_word_gen(sent_scores, texts):
             if word not in sent_scores:
                 yield word
 
-def word_score(text_scores, word):
+def word_score(positive_tweets, negative_tweets, word):
     """
     returns count of matching positive tweets
           / count of matching negative tweets
     using 1 if either is 0
     """
-    pos_n = neg_n = 0
-    for text, is_pos, is_neg in text_scores:
-        if word in text:
-            pos_n += is_pos
-            neg_n += is_neg
-    return (pos_n or 1) / (neg_n or 1)
+    pos = len([text
+            for text in positive_tweets
+                if word in text])
+    neg = len([text
+            for text in negative_tweets
+                if word in text])
+    return (pos or 1) / (neg or 1)
 
 
 def main():
@@ -49,21 +50,17 @@ def main():
 
     texts = list(text_gen(tweet_file))
 
-    # text_scores is a list of triplets:
-    # the tweet text and 2 flags
-    # (text, is positive, is negative)
-    # note tweets can be both positive and negative
-    text_scores = [
-        (
-            text,
-            any(sent_scores.get(word, 0) > 0 for word in text.split()),
-            any(sent_scores.get(word, 0) < 0 for word in text.split()),
-        )
+    positive_tweets = [text
         for text in texts
-    ]
+            if any(sent_scores.get(word, 0) > 0 for word in text.split())
+        ]
+    negative_tweets = [text
+        for text in texts
+            if any(sent_scores.get(word, 0) < 0 for word in text.split())
+        ]
 
     for word in set(unknown_word_gen(sent_scores, texts)):
-        score = word_score(text_scores, word)
+        score = word_score(positive_tweets, negative_tweets, word)
         print word.encode('utf-8'), score
 
 

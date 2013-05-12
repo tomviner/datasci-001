@@ -1,0 +1,5 @@
+{"text": "winner goodz"}
+{"text": "best goodz"}
+{"text": "evil goodz badz"}
+{"text": "bad worst good badz"}
+{"text": "amazing goodz"}
