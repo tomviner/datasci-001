@@ -1,3 +1,4 @@
+-- http://stackoverflow.com/a/7341224/15890
 SELECT count(*)
 FROM (
     SELECT COUNT(DISTINCT docid)
